@@ -1,118 +1,320 @@
-# 📸 snapshot
+<p align="center">
+  <span style="font-size: 120px;">💾</span>
+</p>
 
-> A Claude Code skill that freezes your session into a copy-pasteable context block — so you never lose progress when starting a new chat.
+<h1 align="center">snapshot</h1>
+
+<p align="center">
+  <strong>never lose context. always ship faster.</strong>
+</p>
+
+<p align="center">
+  <a href="https://github.com/Pedro-B-Siqueira/snapshot/stargazers"><img src="https://img.shields.io/github/stars/Pedro-B-Siqueira/snapshot?style=flat&color=4F46E5" alt="Stars"></a>
+  <a href="https://github.com/Pedro-B-Siqueira/snapshot/commits/main"><img src="https://img.shields.io/github/last-commit/Pedro-B-Siqueira/snapshot?style=flat&color=4F46E5" alt="Last Commit"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/Pedro-B-Siqueira/snapshot?style=flat&color=4F46E5" alt="License"></a>
+</p>
+
+<p align="center">
+  <a href="#what-is-snapshot">What is it</a> •
+  <a href="#before--after">Before/After</a> •
+  <a href="#install">Install</a> •
+  <a href="#usage">Usage</a> •
+  <a href="#why-it-works">Why it works</a> •
+  <a href="#faq">FAQ</a>
+</p>
 
 ---
 
-## The problem
+## What is snapshot?
 
-Claude Code sessions are stateless. Every time you hit a token limit or open a fresh chat, you're back to square one — re-explaining your stack, your decisions, why you rejected that library, what's broken, what's not. It's friction that kills flow.
+Every development session builds context. Context gets lost between chats. You restart. You explain everything again. Your brain cycles backwards instead of forwards.
 
-## The fix
+**Snapshot captures your entire session in one command.** One `/snapshot`. Structured. Copy-paste ready. No friction.
 
-Type `/snapshot` at any point. Claude reads the entire session and generates a structured block you can paste directly into a new chat. New chat picks up exactly where the old one left off.
+The result? Seamless context handoff between sessions. Fewer explanations. Faster shipping. Brain energy spent on building, not rehashing.
 
+Think of it like save-game for your development workflow.
+
+---
+
+## Before / After
+
+<table>
+<tr>
+<td width="50%">
+
+### 😩 Without snapshot (manual context)
+
+**You write something like:**
+> "hey so last session i was building this authentication feature for a react app using nextjs. we had some issues with jwt tokens and i think we decided to use httpOnly cookies. also we were trying to figure out the refresh token expiry time and there was this bug where... wait what was the bug again?"
+
+**Next chat wastes 3–5 messages re-explaining:**
+- What you were building
+- Which stack/frameworks
+- What problems you hit
+- What decisions you made
+- Where the code is
+
+</td>
+<td width="50%">
+
+### ✨ With snapshot (one command)
+
+**You type:** `/snapshot`
+
+**Claude returns:**
 ```
-## 📸 Session Snapshot
+## 📋 Session Context
 
-**Project:** auth-service — JWT-based authentication microservice
-**Stack:** Node.js, Fastify, Prisma, PostgreSQL, Redis
-**Goal:** Add refresh token rotation with httpOnly cookie storage
-
----
+**Project:** NextJS auth with JWT + refresh tokens
+**Stack:** React, Next.js, TypeScript, PostgreSQL
+**Objective:** Implement secure auth flow
 
 ### What we did
-
-• Implemented JWT auth with refresh tokens — access token expires in 15min, refresh in 7 days.
-  Stored in httpOnly cookie (not localStorage) to prevent XSS. Endpoint: POST /api/auth/refresh.
-
-• Rejected session-based auth — app is stateless and needs to scale horizontally across pods.
-  Redis is only used for refresh token blocklist (revocation), not session storage.
-
-• Fixed a Prisma transaction bug where refresh token rotation was creating a race condition
-  under concurrent requests. Solved with SELECT FOR UPDATE on the token record.
-
-• ...
-
----
+• Added JWT with 15min access token expiry, 7d refresh
+• Moved refresh token to httpOnly cookie (not localStorage)
+• Fixed race condition in token refresh endpoint
+• Built refresh token rotation for security
 
 ### Current state
-Refresh token rotation is working in local dev. Redis blocklist integration is done.
-Still need to write integration tests and handle the edge case where both tokens expire simultaneously.
+Auth flow working. Need to add logout endpoint.
+
+### Code
+[critical snippet only]
+
+### Next steps
+• Add logout endpoint that invalidates refresh tokens
+• Add token rotation tests
+```
+
+**Next chat starts immediately.** No context debt. No explaining twice.
+
+</td>
+</tr>
+</table>
+
+**Same project. Infinite less friction.**
 
 ---
 
-### Agreed next steps
-• Write integration tests for the refresh flow
-• Handle simultaneous expiry edge case
-```
+## Why it works
+
+| What you gain | Impact |
+|---|---|
+| **Instant context recall** | No "wait, what framework were we using?" — it's right there |
+| **Async-friendly workflows** | Sleep, take a break, come back days later. Full context preserved |
+| **Team handoff** | Pass context between team members without 30min sync call |
+| **Decision memory** | "Why did we choose X over Y?" — it's documented in the snapshot |
+| **Copy-paste ready** | Formatted for immediate use. No reformatting, no paraphrasing |
+| **Session boundaries clear** | What changed session-to-session is obvious. Easy to see progress |
 
 ---
 
 ## Install
 
-Make sure you have [Claude Code](https://claude.ai/code) installed, then run:
+### Claude Code (Recommended)
 
 ```bash
-claude skill install https://github.com/Pedro-B-Siqueira/snapshot/raw/main/snapshot.skill
+# Add the marketplace
+claude plugin marketplace add Pedro-B-Siqueira/snapshot
+
+# Install the plugin
+claude plugin install snapshot@latest
 ```
 
-Or install from a local file:
+That's it. Plugin auto-loads on every Claude Code session after installation.
+
+### Manual installation
+
+If the marketplace method doesn't work yet, install directly:
 
 ```bash
-# Download the .skill file from releases, then:
-claude skill install snapshot.skill
+# Clone the repo
+git clone https://github.com/Pedro-B-Siqueira/snapshot.git
+
+# Copy to Claude Code plugins directory
+cp -r snapshot ~/.claude/plugins/
+
+# Restart Claude Code
 ```
 
----
+### Verify installation
 
-## Usage
-
-Just type `/snapshot` anywhere in a Claude Code session:
+After installing, type in Claude Code:
 
 ```
 /snapshot
 ```
 
-Claude will immediately read the full conversation and output a formatted snapshot block. Copy it, open a new chat, paste it at the top, and continue.
-
-**Also works with:**
-- `/recap`
-- `/handoff`
-- `/context`
-- "summarize the session"
-- "export context for a new chat"
+You should see the skill activate and available for use.
 
 ---
 
-## What gets captured
+## Usage
 
-| Section | What's included |
-|---|---|
-| **Project** | Name, one-line description |
-| **Stack** | Languages, frameworks, tools |
-| **Goal** | What was being built or solved |
-| **What we did** | 5–7 self-contained bullets: decisions, fixes, tradeoffs |
-| **Current state** | What's working, what's pending, what's broken |
-| **Essential code** | Only the most critical snippet (omitted if not relevant) |
-| **Next steps** | Anything agreed upon or left pending |
+### Basic: Save your session
 
-Every bullet is written to be **self-contained** — someone reading cold has full context without needing the original conversation.
+```
+/snapshot
+```
+
+Claude reads your entire conversation and generates a structured summary. Copy it. Save it somewhere (Notion, GitHub gist, markdown file — wherever makes sense for you).
+
+When you restart: paste it at the top of a new chat.
+
+### Advanced: Snapshot with theme
+
+```
+/snapshot focus:architecture
+/snapshot focus:bugs
+/snapshot focus:api-changes
+```
+
+Emphasizes specific aspects. Same structure, different emphasis.
+
+### Stop & discard
+
+```
+stop
+```
+
+Returns to normal Claude mode. Snapshot doesn't auto-activate.
 
 ---
 
-## Why bullets, not a paragraph?
+## The snapshot format
 
-Because when you paste context into a new chat, Claude needs to parse it fast and accurately. Dense, specific bullets are easier to reason over than prose. Each bullet carries a decision **and its reason** — so the new session doesn't revisit settled questions.
+Here's what you get. Designed for human reading AND copy-pasting:
+
+```markdown
+## 📋 Session Context
+
+**Project:** [Name + one-line description]
+**Stack:** [Languages, frameworks, tools]
+**Objective:** [What you're building/solving]
 
 ---
 
-## Also available on
+### What we did
 
-[skills.sh/snapshot](https://skills.sh) — the open registry for Claude Code skills.
+• [5–7 bullets of key decisions, implementations, bugs fixed, pivots]
+• [Each bullet is self-contained — understandable without the full chat]
+• [Specific: real function names, file paths, error messages]
+• [No fluff: "we worked on stuff" is banned]
 
 ---
+
+### Current state
+
+[2–4 sentences: What's working. What's pending. Blockers if any.]
+
+---
+
+### Code snippet (if relevant)
+
+[Only the critical bit. Skip if it's 10+ lines or not essential.]
+
+---
+
+### Next steps
+
+• [What was agreed on next]
+• [What's blocking progress]
+```
+
+**Design principles:**
+- **Self-contained**: Someone reading this cold understands it
+- **Specific**: Real names, real errors, real decisions
+- **Concise**: No filler. Every bullet earns its space
+- **Actionable**: Next chat can start building immediately
+
+---
+
+## Why snapshot, not just copy-paste?
+
+| Approach | Time | Clarity | Usable? |
+|---|---|---|---|
+| **Copy-paste chat** | 5 sec | Low (whole conversation) | Messy |
+| **Manual summary** | 5–10 min | High (you curate) | Good |
+| **snapshot** | 5 sec | High (structured format) | Perfect |
+
+You get speed + clarity without the work.
+
+---
+
+## FAQ
+
+**Q: Is snapshot just a summary?**
+
+A: Sort of. It's a *structured, copy-paste-ready* summary designed specifically for handing off between chats. Not "here's what happened" — more "here's what you need to know to keep shipping."
+
+---
+
+**Q: Can I use snapshot for other AI models?**
+
+A: Yes! The format works with Claude, GPT, Gemini, whatever. It's just markdown + structure. The `/snapshot` command is Claude-specific (Claude Code), but you can manually generate the format for any model.
+
+---
+
+**Q: What if my session is messy / non-linear?**
+
+A: Snapshot handles it. It pulls out the *signal* (decisions, implementations, blockers) from the *noise* (back-and-forth, dead ends, tangents).
+
+---
+
+**Q: Does snapshot save my code/credentials/secrets?**
+
+A: No. Snapshot strips out:
+- Your API keys
+- Database credentials  
+- Sensitive filenames
+- Anything marked `[PRIVATE]`
+
+It's safe to share, safe to paste anywhere.
+
+---
+
+**Q: Can I customize the format?**
+
+A: Absolutely. Edit the template in the plugin. Want different sections? Different emoji? Custom focus areas? It's all yours.
+
+---
+
+**Q: Does snapshot slow down Claude Code?**
+
+A: Zero impact. Runs on-demand when you type `/snapshot`. No background polling, no constant overhead.
+
+---
+
+## Philosophy
+
+Most tools solve problems. Snapshot solves *friction*.
+
+The friction of context handoff. The friction of re-explaining. The friction of wondering "wait, why did we decide that?" three chats later.
+
+It's small. It's boring. But it compounds. Every session you use it, you ship a little faster. You think a little clearer. Your projects have better memory.
+
+That's the goal.
+
+---
+
+## Built by
+
+[Pedro B. Siqueira](https://github.com/Pedro-B-Siqueira)
+
+Inspired by the need to never lose context between sessions.
+
+### README reference
+
+[caveman](https://github.com/JuliusBrussee/caveman)
 
 ## License
 
-MIT
+MIT — use it, modify it, share it freely.
+
+---
+
+<p align="center">
+  <strong>Ship faster. Keep context.</strong><br>
+  One `/snapshot` at a time.
+</p>

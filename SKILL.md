@@ -1,110 +1,233 @@
 ---
 name: snapshot
-description: >
-  Generates a structured, copy-paste-ready summary of the current session whenever
-  the user types "/snapshot". Trigger immediately on "/snapshot" in any message.
-  Also trigger for variations like "/recap", "/summary", "/handoff", "/context" or
-  requests like "summarize the session", "what have we done", "export context",
-  "catch me up", or "prepare context for a new chat".
+displayName: Snapshot
+version: 1.0.0
+description: Never lose context. Always ship faster. Capture your entire development session in one /snapshot command.
+author: Pedro B. Siqueira
+repository: https://github.com/Pedro-B-Siqueira/snapshot
+license: MIT
 ---
 
-# Snapshot — `/snapshot`
+# Snapshot Skill — Complete Guide
 
-## What this skill does
+## Overview
 
-When the user types `/snapshot`, read the entire conversation and produce a single
-copy-pasteable block that preserves all critical context — so they can open a new
-chat and pick up exactly where they left off, without re-explaining anything.
+Snapshot captures your entire development session in a structured, copy-paste-ready format. One `/snapshot` command. No friction. Instant context handoff between chats.
 
 ---
 
-## How to generate the snapshot
+## How it works
 
-### Step 1 — Read the full conversation
-Scan every message before writing a single word of output.
+### Trigger the skill
 
-### Step 2 — Extract critical elements
-Look for:
-- **Project context**: name, stack, language, frameworks, environment, repo
-- **Main goal**: what was being built or solved
-- **Key decisions**: architecture choices, libraries picked, alternatives rejected and why
-- **Essential code**: central functions, data structures, configs, API contracts
-- **Problems & fixes**: bugs hit, errors seen, workarounds applied
-- **Current state**: what's working, what's broken, what's untouched
-- **Next steps**: anything explicitly agreed upon or left pending
+```
+/snapshot
+```
 
-### Step 3 — Write the output block
+### What happens
 
-Use **exactly** this format — no extra commentary before or after:
+1. Claude reads your entire conversation history from this session
+2. Extracts critical elements: decisions, implementations, problems, solutions
+3. Generates a structured markdown document
+4. Returns it ready to copy-paste into your next chat
 
-~~~
-## 📸 Session Snapshot
+### Output format
 
-**Project:** [name / one-line description]
-**Stack:** [languages, frameworks, key tools]
-**Goal:** [what was being built or solved]
+```markdown
+## 📋 Session Context
+
+**Project:** NextJS auth with JWT
+**Stack:** React, Next.js, TypeScript, PostgreSQL
+**Objective:** Implement secure authentication flow
 
 ---
 
 ### What we did
 
-• [Bullet 1 — critical decision or action, self-contained with enough context to never need re-asking]
-• [Bullet 2 — ...]
-• [Bullet 3 — ...]
-• [Bullet 4 — ...]
-• [Bullet 5 — ...] ← minimum 5
-• [Bullet 6 — ...] ← include if there's relevant content
-• [Bullet 7 — ...] ← include if there's relevant content
+• Added JWT with 15min access token, 7d refresh token
+• Moved refresh token to httpOnly cookie for security
+• Fixed race condition in token refresh endpoint
+• Built token rotation for additional security layer
 
 ---
 
 ### Current state
-[2–4 lines: what's working, what's pending, what's broken]
+
+Auth endpoints working. Refresh flow tested. Need logout endpoint and tests.
 
 ---
 
-### Essential code
-```[language]
-[Only the most critical snippet — key function, data structure, config, or API shape.
-Omit this section entirely if no code is relevant.]
+### Code snippet
+
+[Only critical code, if relevant]
+
+---
+
+### Next steps
+
+• Implement logout endpoint that invalidates tokens
+• Add integration tests for auth flow
 ```
 
 ---
 
-### Agreed next steps
-• [Next step 1]
-• [Next step 2]
+## Quality standards
 
----
-> Paste this block at the top of your next chat to continue right where you left off.
-~~~
+Every snapshot follows these rules:
 
----
-
-## Quality rules
-
-- **Every bullet must be self-contained** — someone reading it cold should have full context, no guessing.
-- **Be specific** — use real file names, function names, variable names, error messages. Never generalize.
-- **Decisions need reasons** — if something was rejected, say why (e.g., "dropped Redux for Zustand — too much boilerplate for this scope").
-- **Code only if essential** — don't paste everything; only what a new chat would need to avoid rework.
-- **No filler** — never write "we did several interesting things". Be direct and dense.
-- **Match the user's language** — if they wrote in Portuguese, snapshot in Portuguese. If English, English.
-- **Bullet length** — 1–3 lines each. No sub-bullets.
-
----
-
-## Short session handling
-
-If the session has fewer than 3 meaningful exchanges or no substantial technical content, respond with:
-
-> "The session is too short for a useful snapshot yet. Keep working and run `/snapshot` again when there's more to capture."
-
----
-
-## Example: bad bullet vs. good bullet
+### 1. Self-contained bullets
 
 ❌ Bad:
-> • We worked on authentication and fixed some issues.
+> • We worked on the auth thing and fixed some issues
 
 ✅ Good:
-> • Implemented JWT auth with refresh tokens — access token expires in 15min, refresh in 7 days. Refresh token is stored in an `httpOnly` cookie (not localStorage) for security. Refresh endpoint is `POST /api/auth/refresh`. Rejected session-based auth because the app is stateless.
+> • Implemented JWT with 15min access token expiry in /api/auth/login. Refresh token stored in httpOnly cookie (POST /api/auth/refresh) for security.
+
+### 2. Specific details
+
+Always include:
+- Real file paths: `/app/auth/middleware.ts` not "some file"
+- Real function names: `verifyRefreshToken()` not "the token function"
+- Real error messages: "Cannot POST /api/auth/refresh" not "there was an error"
+- Real decisions: "Chose httpOnly cookies over localStorage because [reason]"
+
+### 3. Concise structure
+
+- 5–7 bullets under "What we did"
+- 2–4 sentences for "Current state"
+- Code snippet only if critical (skip if 10+ lines or not essential)
+- 2–3 items in "Next steps"
+
+### 4. No filler language
+
+Banned phrases:
+- "We worked on..."
+- "We did some stuff..."
+- "It was interesting..."
+- "Basically..."
+- "Pretty much..."
+- "Just..."
+- "Really..."
+
+---
+
+## Common use cases
+
+### Daily development handoff
+
+End of workday:
+```
+/snapshot
+```
+
+Copy the output. Save to a markdown file or note app. Next day, paste at the top of a new chat. Resume immediately.
+
+### Team context passing
+
+Handing off to a teammate? Snapshot captures everything they need to know — no verbal sync required.
+
+### Async collaboration
+
+Pausing work for a day/week? Snapshot preserves full context. Come back anytime and understand exactly where you left off.
+
+### Debug documentation
+
+During bug hunting? Snapshot records what you've tried, what failed, and what worked. Useful for your own reference or sharing with others.
+
+### Architecture decisions
+
+Building something complex? Snapshot documents your design decisions and why you made each choice.
+
+---
+
+## What gets captured
+
+✅ Included:
+- All code written or discussed
+- Architecture decisions and reasoning
+- Problems encountered and solutions
+- Testing approaches
+- Library/framework choices
+- File structure changes
+- Error messages and fixes
+- Performance considerations
+- Security decisions
+
+❌ Excluded:
+- API keys, secrets, credentials
+- Sensitive personal data
+- Anything marked `[PRIVATE]`
+- Chat metadata (timestamps, user IDs)
+- Debugging noise (typos, false starts)
+
+---
+
+## Tips for better snapshots
+
+### Before you run `/snapshot`
+
+- **Summarize wins**: If you solved something, say it explicitly. Don't assume Claude remembers.
+- **Name things**: Use real variable names, file paths, function names. Don't say "that thing".
+- **Explain decisions**: When you chose one approach over another, say why.
+
+### After you get the snapshot
+
+- **Review it**: Does it make sense to someone reading it cold?
+- **Edit if needed**: Feel free to trim, adjust, or reorganize.
+- **Save it**: Wherever you keep project notes (GitHub, Notion, local markdown file).
+
+---
+
+## Troubleshooting
+
+### "Session is too short"
+
+Snapshot won't activate for very short sessions (less than 3 meaningful exchanges). Build up some context first, then run `/snapshot`.
+
+### "Nothing technical in this session"
+
+If the conversation has no code or technical substance, snapshot will decline. It's designed for development work.
+
+### "Generated snapshot feels incomplete"
+
+Snapshot works best when:
+- You used specific language (real names, real errors)
+- You explained decisions ("we chose X because Y")
+- You tested or validated code
+
+Vague conversations produce vague snapshots. Be explicit, get better snapshots.
+
+---
+
+## Customization
+
+Want to modify the snapshot format? Edit the skill in Claude Code settings. You can:
+
+- Change section names
+- Add/remove sections
+- Adjust emoji
+- Modify template structure
+
+The skill file is yours to customize.
+
+---
+
+## Philosophy
+
+Most dev tools solve technical problems. Snapshot solves **friction**.
+
+The friction of context loss between sessions. The friction of re-explaining. The friction of "wait, why did we decide that?"
+
+It's small. It's boring. But it compounds. Every session using snapshot, you:
+- Spend less time re-establishing context
+- Make fewer context-switching mistakes
+- Build better project memory
+- Ship faster overall
+
+That's the entire goal.
+
+---
+
+## Questions?
+
+Check the main README for more info, or open an issue on GitHub.

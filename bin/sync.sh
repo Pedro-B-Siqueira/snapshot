@@ -35,9 +35,4 @@ cp "$BODY" .github/copilot-instructions.md
 echo "Rebuilding snapshot.skill..."
 zip -r snapshot.skill skills/snapshot/
 
-echo "Done. Committing..."
-git add -A
-git commit -m "chore: sync SKILL.md and rules to all agents"
-git push
-
-echo "All synced and pushed."
+echo "Done. Please review your changes and commit manually."

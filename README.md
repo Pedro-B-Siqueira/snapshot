@@ -141,14 +141,10 @@ claude skill install snapshot.skill
 <details>
 <summary><strong>Claude Code — full details</strong></summary>
 
+First, type `claude` to start Claude Code, then:
 ```bash
-claude plugin marketplace add Pedro-B-Siqueira/snapshot
-claude plugin install snapshot@snapshot
-```
-
-Or install from a local `.skill` file:
-```bash
-claude skill install snapshot.skill
+/plugin marketplace add Pedro-B-Siqueira/snapshot
+/plugin install snapshot@snapshot
 ```
 
 Then type `/snapshot` in any session to capture context.

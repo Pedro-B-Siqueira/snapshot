@@ -32,6 +32,7 @@ Look for:
 - **Problems & fixes**: bugs hit, errors seen, workarounds applied
 - **Current state**: what's working, what's broken, what's untouched
 - **Next steps**: anything explicitly agreed upon or left pending
+- **Sensitive data screening**: STRICTLY IDENTIFY AND IGNORE all API keys, access tokens, passwords, and sensitive credentials.
 
 ### Step 3 — Write the output block
 
@@ -71,6 +72,12 @@ Omit this section entirely if no code is relevant.]
 
 ---
 
+### Security Note
+[Include ONLY IF sensitive data like API keys/tokens were shared in the session but skipped:]
+> ⚠️ **Notice:** Chaves sensíveis (API keys, tokens, etc.) foram compartilhadas na sessão original, mas foram ignoradas e removidas na criação deste snapshot por motivos de segurança.
+
+---
+
 ### Agreed next steps
 • [Next step 1]
 • [Next step 2]
@@ -88,6 +95,7 @@ Omit this section entirely if no code is relevant.]
 - **Decisions need reasons** — if something was rejected, say why (e.g., "dropped Redux for Zustand — too much boilerplate for this scope").
 - **Code only if essential** — don't paste everything; only what a new chat would need to avoid rework.
 - **No filler** — never write "we did several interesting things". Be direct and dense.
+- **Privacy first** — NEVER include API keys, passwords, or sensitive credentials in the snapshot.
 - **Match the user's language** — if they wrote in Portuguese, snapshot in Portuguese. If English, English.
 - **Bullet length** — 1–3 lines each. No sub-bullets.
 

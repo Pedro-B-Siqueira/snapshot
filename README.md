@@ -280,7 +280,7 @@ A: Snapshot handles it. It extracts signal (decisions, implementations, blockers
 
 **Q: Does it capture sensitive information?**
 
-A: Snapshot captures what's in the conversation. If you've pasted API keys or credentials into the chat, review the output before sharing it. Use `[PRIVATE]` to mark things you don't want included.
+A: No. Snapshot is instructed to identify and strictly ignore API keys, access tokens, passwords, and sensitive credentials. If it detects that sensitive keys were shared during the session, it will omit them from the output and add a security warning to the snapshot (e.g., "*Sensitive keys were shared in the original session but were ignored in this snapshot creation*"). You should still always review the final output before sharing it just to be safe.
 
 **Q: Can I customize the output format?**
 

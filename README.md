@@ -1,5 +1,5 @@
 <p align="center">
-  <span style="font-size: 120px;">💾</span>
+  <span style="font-size: 100px;">📸</span>
 </p>
 
 <h1 align="center">snapshot</h1>
@@ -19,7 +19,7 @@
   <a href="#before--after">Before/After</a> •
   <a href="#install">Install</a> •
   <a href="#usage">Usage</a> •
-  <a href="#why-it-works">Why it works</a> •
+  <a href="#what-gets-captured">What gets captured</a> •
   <a href="#faq">FAQ</a>
 </p>
 
@@ -31,9 +31,7 @@ Every development session builds context. Context gets lost between chats. You r
 
 **Snapshot captures your entire session in one command.** One `/snapshot`. Structured. Copy-paste ready. No friction.
 
-The result? Seamless context handoff between sessions. Fewer explanations. Faster shipping. Brain energy spent on building, not rehashing.
-
-Think of it like save-game for your development workflow.
+Think of it like a save-game for your development workflow.
 
 ---
 
@@ -43,278 +41,264 @@ Think of it like save-game for your development workflow.
 <tr>
 <td width="50%">
 
-### 😩 Without snapshot (manual context)
+### 😩 Without snapshot
 
-**You write something like:**
-> "hey so last session i was building this authentication feature for a react app using nextjs. we had some issues with jwt tokens and i think we decided to use httpOnly cookies. also we were trying to figure out the refresh token expiry time and there was this bug where... wait what was the bug again?"
+**You type something like:**
+> "hey so last session i was building this auth feature for a nextjs app. we had some issues with jwt tokens and i think we decided to use httpOnly cookies. also we were trying to figure out the refresh token expiry time and there was this bug where... wait what was the bug again?"
 
 **Next chat wastes 3–5 messages re-explaining:**
 - What you were building
 - Which stack/frameworks
 - What problems you hit
 - What decisions you made
-- Where the code is
+- Where you left off
 
 </td>
 <td width="50%">
 
-### ✨ With snapshot (one command)
+### ✨ With snapshot
 
 **You type:** `/snapshot`
 
 **Claude returns:**
 ```
-## 📋 Session Context
+## 📸 Session Snapshot
 
 **Project:** NextJS auth with JWT + refresh tokens
 **Stack:** React, Next.js, TypeScript, PostgreSQL
-**Objective:** Implement secure auth flow
+**Goal:** Implement secure auth flow
 
 ### What we did
-• Added JWT with 15min access token expiry, 7d refresh
+• Added JWT with 15min access token, 7d refresh token
 • Moved refresh token to httpOnly cookie (not localStorage)
-• Fixed race condition in token refresh endpoint
-• Built refresh token rotation for security
+  to prevent XSS — rejected localStorage after security review
+• Fixed race condition in token refresh endpoint using
+  SELECT FOR UPDATE on the token record
+• Rejected session-based auth — app is stateless, needs
+  horizontal scaling across pods
 
 ### Current state
-Auth flow working. Need to add logout endpoint.
+Auth flow working. Redis blocklist integrated.
+Still need logout endpoint and integration tests.
 
-### Code
-[critical snippet only]
-
-### Next steps
+### Agreed next steps
 • Add logout endpoint that invalidates refresh tokens
-• Add token rotation tests
+• Write integration tests for the refresh flow
 ```
 
-**Next chat starts immediately.** No context debt. No explaining twice.
+**Next chat starts immediately.** No context debt.
 
 </td>
 </tr>
 </table>
 
-**Same project. Infinite less friction.**
-
----
-
-## Why it works
-
-| What you gain | Impact |
-|---|---|
-| **Instant context recall** | No "wait, what framework were we using?" — it's right there |
-| **Async-friendly workflows** | Sleep, take a break, come back days later. Full context preserved |
-| **Team handoff** | Pass context between team members without 30min sync call |
-| **Decision memory** | "Why did we choose X over Y?" — it's documented in the snapshot |
-| **Copy-paste ready** | Formatted for immediate use. No reformatting, no paraphrasing |
-| **Session boundaries clear** | What changed session-to-session is obvious. Easy to see progress |
-
 ---
 
 ## Install
 
-### Claude Code (Recommended)
+Pick your agent. One command. Done.
+
+| Agent | Install |
+|-------|---------|
+| **Claude Code** | `claude plugin marketplace add Pedro-B-Siqueira/snapshot && claude plugin install snapshot@snapshot` |
+| **Gemini CLI** | `gemini extensions install https://github.com/Pedro-B-Siqueira/snapshot` |
+| **Cursor** | `npx skills add Pedro-B-Siqueira/snapshot -a cursor` |
+| **Windsurf** | `npx skills add Pedro-B-Siqueira/snapshot -a windsurf` |
+| **Copilot** | `npx skills add Pedro-B-Siqueira/snapshot -a github-copilot` |
+| **Cline** | `npx skills add Pedro-B-Siqueira/snapshot -a cline` |
+| **Any other** | `npx skills add Pedro-B-Siqueira/snapshot` |
+
+### Manual install
 
 ```bash
-# Add the marketplace
-claude plugin marketplace add Pedro-B-Siqueira/snapshot
-
-# Install the plugin
-claude plugin install snapshot@latest
-```
-
-That's it. Plugin auto-loads on every Claude Code session after installation.
-
-### Manual installation
-
-If the marketplace method doesn't work yet, install directly:
-
-```bash
-# Clone the repo
 git clone https://github.com/Pedro-B-Siqueira/snapshot.git
-
-# Copy to Claude Code plugins directory
 cp -r snapshot ~/.claude/plugins/
-
-# Restart Claude Code
 ```
 
-### Verify installation
+### Via .skill file
 
-After installing, type in Claude Code:
+Download `snapshot.skill` from [releases](https://github.com/Pedro-B-Siqueira/snapshot/releases) and run:
+
+```bash
+claude skill install snapshot.skill
+```
+
+---
+
+### What You Get
+
+| Feature | Claude Code | Gemini CLI | Cursor | Windsurf | Cline | Copilot |
+|---------|:-----------:|:----------:|:------:|:--------:|:-----:|:-------:|
+| `/snapshot` command | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `/recap`, `/handoff`, `/context` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Structured output format | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Respects user's language (PT/EN/etc) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+> **Note:** `npx skills add` installs the skill file — it does **not** auto-activate snapshot on session start. Snapshot only runs when you explicitly type `/snapshot`. This is intentional: you control when context is captured.
+
+---
+
+<details>
+<summary><strong>Claude Code — full details</strong></summary>
+
+```bash
+claude plugin marketplace add Pedro-B-Siqueira/snapshot
+claude plugin install snapshot@snapshot
+```
+
+Or install from a local `.skill` file:
+```bash
+claude skill install snapshot.skill
+```
+
+Then type `/snapshot` in any session to capture context.
+
+</details>
+
+<details>
+<summary><strong>Gemini CLI — full details</strong></summary>
+
+```bash
+gemini extensions install https://github.com/Pedro-B-Siqueira/snapshot
+```
+
+Update: `gemini extensions update snapshot` · Uninstall: `gemini extensions uninstall snapshot`
+
+</details>
+
+<details>
+<summary><strong>Cursor / Windsurf / Cline / Copilot — full details</strong></summary>
+
+```bash
+# Cursor
+npx skills add Pedro-B-Siqueira/snapshot -a cursor
+
+# Windsurf
+npx skills add Pedro-B-Siqueira/snapshot -a windsurf
+
+# Cline
+npx skills add Pedro-B-Siqueira/snapshot -a cline
+
+# Copilot
+npx skills add Pedro-B-Siqueira/snapshot -a github-copilot
+
+# Auto-detect
+npx skills add Pedro-B-Siqueira/snapshot
+```
+
+Uninstall: `npx skills remove snapshot`
+
+</details>
+
+<details>
+<summary><strong>Any other agent (opencode, Roo, Amp, Goose, and 40+ more)</strong></summary>
+
+```bash
+npx skills add Pedro-B-Siqueira/snapshot           # auto-detect agent
+npx skills add Pedro-B-Siqueira/snapshot -a amp
+npx skills add Pedro-B-Siqueira/snapshot -a goose
+npx skills add Pedro-B-Siqueira/snapshot -a roo
+```
+
+**Want it always available?** Paste this into your agent's system prompt or rules file:
 
 ```
-/snapshot
+When user types /snapshot (or /recap, /handoff, /context, /summary), read the entire
+conversation and output a structured snapshot:
+
+## 📸 Session Snapshot
+**Project:** [name] | **Stack:** [tools] | **Goal:** [what was being solved]
+
+### What we did
+• [5–7 self-contained bullets — real names, real decisions, reasons for each choice]
+
+### Current state
+[2–4 lines: what works, what's pending, what's broken]
+
+### Essential code (if relevant)
+[Only the most critical snippet]
+
+### Agreed next steps
+• [Next step 1]
+
+> Paste this block at the top of your next chat to continue right where you left off.
 ```
 
-You should see the skill activate and available for use.
+</details>
 
 ---
 
 ## Usage
 
-### Basic: Save your session
+### Basic
+
+Type `/snapshot` anywhere in a session:
 
 ```
 /snapshot
 ```
 
-Claude reads your entire conversation and generates a structured summary. Copy it. Save it somewhere (Notion, GitHub gist, markdown file — wherever makes sense for you).
+Claude reads the full conversation and outputs a structured snapshot. Copy it. Open a new chat. Paste at the top. Continue exactly where you stopped.
 
-When you restart: paste it at the top of a new chat.
+### Also works with
 
-### Advanced: Snapshot with theme
-
-```
-/snapshot focus:architecture
-/snapshot focus:bugs
-/snapshot focus:api-changes
-```
-
-Emphasizes specific aspects. Same structure, different emphasis.
-
-### Stop & discard
-
-```
-stop
-```
-
-Returns to normal Claude mode. Snapshot doesn't auto-activate.
+- `/recap` — same output
+- `/handoff` — same output
+- `/context` — same output
+- `/summary` — same output
+- "summarize the session"
+- "export context for a new chat"
+- "catch me up"
 
 ---
 
-## The snapshot format
+## What gets captured
 
-Here's what you get. Designed for human reading AND copy-pasting:
+| Section | What's included |
+|---|---|
+| **Project** | Name, one-line description |
+| **Stack** | Languages, frameworks, tools |
+| **Goal** | What was being built or solved |
+| **What we did** | 5–7 self-contained bullets: decisions, fixes, tradeoffs, with reasons |
+| **Current state** | What's working, what's pending, what's broken |
+| **Essential code** | Only the most critical snippet (omitted if not relevant) |
+| **Next steps** | Anything agreed upon or left pending |
 
-```markdown
-## 📋 Session Context
-
-**Project:** [Name + one-line description]
-**Stack:** [Languages, frameworks, tools]
-**Objective:** [What you're building/solving]
-
----
-
-### What we did
-
-• [5–7 bullets of key decisions, implementations, bugs fixed, pivots]
-• [Each bullet is self-contained — understandable without the full chat]
-• [Specific: real function names, file paths, error messages]
-• [No fluff: "we worked on stuff" is banned]
-
----
-
-### Current state
-
-[2–4 sentences: What's working. What's pending. Blockers if any.]
-
----
-
-### Code snippet (if relevant)
-
-[Only the critical bit. Skip if it's 10+ lines or not essential.]
-
----
-
-### Next steps
-
-• [What was agreed on next]
-• [What's blocking progress]
-```
-
-**Design principles:**
-- **Self-contained**: Someone reading this cold understands it
-- **Specific**: Real names, real errors, real decisions
-- **Concise**: No filler. Every bullet earns its space
-- **Actionable**: Next chat can start building immediately
-
----
-
-## Why snapshot, not just copy-paste?
-
-| Approach | Time | Clarity | Usable? |
-|---|---|---|---|
-| **Copy-paste chat** | 5 sec | Low (whole conversation) | Messy |
-| **Manual summary** | 5–10 min | High (you curate) | Good |
-| **snapshot** | 5 sec | High (structured format) | Perfect |
-
-You get speed + clarity without the work.
+Every bullet is self-contained — someone reading cold has full context.
 
 ---
 
 ## FAQ
 
-**Q: Is snapshot just a summary?**
+**Q: Does snapshot work for non-coding sessions?**
 
-A: Sort of. It's a *structured, copy-paste-ready* summary designed specifically for handing off between chats. Not "here's what happened" — more "here's what you need to know to keep shipping."
+A: Yes. It works for any kind of work: architecture planning, document writing, debugging, research. If there's context worth preserving, snapshot captures it.
 
----
+**Q: What if my session is messy or non-linear?**
 
-**Q: Can I use snapshot for other AI models?**
+A: Snapshot handles it. It extracts signal (decisions, implementations, blockers) from noise (back-and-forth, dead ends, tangents).
 
-A: Yes! The format works with Claude, GPT, Gemini, whatever. It's just markdown + structure. The `/snapshot` command is Claude-specific (Claude Code), but you can manually generate the format for any model.
+**Q: Does it capture sensitive information?**
 
----
+A: Snapshot captures what's in the conversation. If you've pasted API keys or credentials into the chat, review the output before sharing it. Use `[PRIVATE]` to mark things you don't want included.
 
-**Q: What if my session is messy / non-linear?**
+**Q: Can I customize the output format?**
 
-A: Snapshot handles it. It pulls out the *signal* (decisions, implementations, blockers) from the *noise* (back-and-forth, dead ends, tangents).
+A: Yes — edit `snapshot/SKILL.md`. Change sections, add your team's preferred structure, adjust language defaults.
 
----
+**Q: Does it slow down my agent?**
 
-**Q: Does snapshot save my code/credentials/secrets?**
-
-A: No. Snapshot strips out:
-- Your API keys
-- Database credentials  
-- Sensitive filenames
-- Anything marked `[PRIVATE]`
-
-It's safe to share, safe to paste anywhere.
+A: Zero impact. Snapshot runs on-demand only when you type `/snapshot`. No background processes.
 
 ---
-
-**Q: Can I customize the format?**
-
-A: Absolutely. Edit the template in the plugin. Want different sections? Different emoji? Custom focus areas? It's all yours.
-
----
-
-**Q: Does snapshot slow down Claude Code?**
-
-A: Zero impact. Runs on-demand when you type `/snapshot`. No background polling, no constant overhead.
-
----
-
-## Philosophy
-
-Most tools solve problems. Snapshot solves *friction*.
-
-The friction of context handoff. The friction of re-explaining. The friction of wondering "wait, why did we decide that?" three chats later.
-
-It's small. It's boring. But it compounds. Every session you use it, you ship a little faster. You think a little clearer. Your projects have better memory.
-
-That's the goal.
-
----
-
-## Built by
-
-[Pedro B. Siqueira](https://github.com/Pedro-B-Siqueira)
-
-Inspired by the need to never lose context between sessions.
-
-### README reference
-
-[caveman](https://github.com/JuliusBrussee/caveman)
 
 ## License
 
-MIT — use it, modify it, share it freely.
+MIT — use it, modify it, share it.
 
 ---
 
 <p align="center">
   <strong>Ship faster. Keep context.</strong><br>
-  One `/snapshot` at a time.
+  One <code>/snapshot</code> at a time.
 </p>

@@ -1,0 +1,69 @@
+name: Sync SKILL.md to all agents
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'snapshot/SKILL.md'
+      - 'rules/snapshot-activate.md'
+
+concurrency:
+  group: sync-skill
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Pull latest before making changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
+
+      - name: Sync SKILL.md to agent-specific locations
+        run: |
+          cp snapshot/SKILL.md .cursor/skills/snapshot/SKILL.md
+          mkdir -p .windsurf/skills/snapshot
+          cp snapshot/SKILL.md .windsurf/skills/snapshot/SKILL.md
+
+      - name: Rebuild snapshot.skill ZIP
+        run: cd snapshot && zip -r ../snapshot.skill . && cd ..
+
+      - name: Sync always-on rule to all agents
+        run: |
+          BODY="rules/snapshot-activate.md"
+
+          # Cline — no frontmatter needed
+          cp "$BODY" .clinerules/snapshot.md
+
+          # Copilot
+          cp "$BODY" .github/copilot-instructions.md
+
+          # Cursor — needs alwaysApply frontmatter
+          printf '%s\n' '---' 'description: "Snapshot — capture session context on /snapshot for copy-paste handoff between chats"' 'alwaysApply: false' '---' '' > .cursor/rules/snapshot.mdc
+          cat "$BODY" >> .cursor/rules/snapshot.mdc
+
+          # Windsurf — needs trigger frontmatter
+          printf '%s\n' '---' 'trigger: manual' '---' '' > .windsurf/rules/snapshot.md
+          cat "$BODY" >> .windsurf/rules/snapshot.md
+
+      - name: Commit and push if changed
+        run: |
+          git add \
+            .cursor/skills/snapshot/SKILL.md \
+            .windsurf/skills/snapshot/SKILL.md \
+            snapshot.skill \
+            .clinerules/snapshot.md \
+            .github/copilot-instructions.md \
+            .cursor/rules/snapshot.mdc \
+            .windsurf/rules/snapshot.md
+          git diff --staged --quiet && exit 0
+          git commit -m "chore: sync SKILL.md and rules to all agents [skip ci]"
+          git push

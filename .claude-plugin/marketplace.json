@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "snapshot",
+  "description": "Freeze your session into a copy-pasteable context block. Never lose progress when starting a new chat.",
+  "owner": {
+    "name": "Pedro B. Siqueira",
+    "url": "https://github.com/Pedro-B-Siqueira"
+  },
+  "plugins": [
+    {
+      "name": "snapshot",
+      "description": "Type /snapshot to capture your entire session as a structured, copy-paste-ready block. Paste it at the top of your next chat to continue seamlessly.",
+      "source": "./",
+      "category": "productivity"
+    }
+  ]
+}

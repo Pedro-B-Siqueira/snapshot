@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/Pedro-B-Siqueira/snapshot/stargazers"><img src="https://img.shields.io/github/stars/Pedro-B-Siqueira/snapshot?style=flat&color=4F46E5" alt="Stars"></a>
-  <a href="https://github.com/Pedro-B-Siqueira/snapshot/commits/main"><img src="https://img.shields.io/github/last-commit/Pedro-B-Siqueira/snapshot?style=flat&color=4F46E5" alt="Last Commit"></a>
+  <a href="https://github.com/Pedro-B-Siqueira/snapshot/commits/master"><img src="https://img.shields.io/github/last-commit/Pedro-B-Siqueira/snapshot?style=flat&color=4F46E5" alt="Last Commit"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/Pedro-B-Siqueira/snapshot?style=flat&color=4F46E5" alt="License"></a>
 </p>
 
@@ -141,10 +141,14 @@ claude skill install snapshot.skill
 <details>
 <summary><strong>Claude Code — full details</strong></summary>
 
-First, type `claude` to start Claude Code, then:
 ```bash
-/plugin marketplace add Pedro-B-Siqueira/snapshot
-/plugin install snapshot@snapshot
+claude plugin marketplace add Pedro-B-Siqueira/snapshot
+claude plugin install snapshot@snapshot
+```
+
+Or install from a local `.skill` file:
+```bash
+claude skill install snapshot.skill
 ```
 
 Then type `/snapshot` in any session to capture context.

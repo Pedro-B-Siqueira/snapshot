@@ -18,46 +18,48 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: master
 
-      - name: Pull latest before making changes
+      - name: Configure git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git pull --rebase origin master
 
       - name: Sync SKILL.md to agent-specific locations
         run: |
-          mkdir -p .cursor/skills/snapshot
           cp skills/snapshot/SKILL.md .cursor/skills/snapshot/SKILL.md
-          mkdir -p .windsurf/skills/snapshot
           cp skills/snapshot/SKILL.md .windsurf/skills/snapshot/SKILL.md
 
       - name: Rebuild snapshot.skill ZIP
-        run: cd skills/snapshot && zip -r ../../snapshot.skill . && cd ..
+        run: zip -r snapshot.skill skills/snapshot/
 
       - name: Sync always-on rule to all agents
         run: |
           BODY="rules/snapshot-activate.md"
 
           # Cline — no frontmatter needed
-          mkdir -p .clinerules
           cp "$BODY" .clinerules/snapshot.md
 
           # Copilot
-          mkdir -p .github
           cp "$BODY" .github/copilot-instructions.md
 
           # Cursor — needs alwaysApply frontmatter
-          mkdir -p .cursor/rules
-          printf '%s\n' '---' 'description: "Snapshot — capture session context on /snapshot for copy-paste handoff between chats"' 'alwaysApply: false' '---' '' > .cursor/rules/snapshot.mdc
-          cat "$BODY" >> .cursor/rules/snapshot.mdc
+          {
+            echo '---'
+            echo 'description: "Snapshot — capture session context on /snapshot for copy-paste handoff between chats"'
+            echo 'alwaysApply: false'
+            echo '---'
+            echo ''
+            cat "$BODY"
+          } > .cursor/rules/snapshot.mdc
 
           # Windsurf — needs trigger frontmatter
-          mkdir -p .windsurf/rules
-          printf '%s\n' '---' 'trigger: manual' '---' '' > .windsurf/rules/snapshot.md
-          cat "$BODY" >> .windsurf/rules/snapshot.md
+          {
+            echo '---'
+            echo 'trigger: manual'
+            echo '---'
+            echo ''
+            cat "$BODY"
+          } > .windsurf/rules/snapshot.md
 
       - name: Commit and push if changed
         run: |
@@ -69,6 +71,6 @@ jobs:
             .github/copilot-instructions.md \
             .cursor/rules/snapshot.mdc \
             .windsurf/rules/snapshot.md
-          git diff --staged --quiet && exit 0
+          git diff --staged --quiet && echo "Nothing to sync" && exit 0
           git commit -m "chore: sync SKILL.md and rules to all agents [skip ci]"
           git push

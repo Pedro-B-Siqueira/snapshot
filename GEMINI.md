@@ -1,0 +1,1 @@
+@./skills/snapshot/SKILL.md

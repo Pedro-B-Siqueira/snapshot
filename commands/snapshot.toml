@@ -1,0 +1,2 @@
+description = "Capture current session as a structured, copy-paste-ready context block"
+prompt = "Read the entire conversation and generate a session snapshot. Format: Project, Stack, Goal, What we did (5–7 self-contained bullets with decisions and reasons), Current state, Essential code (if relevant), Agreed next steps. Every bullet must be self-contained — real names, real errors, real decisions with reasons. Match the user's language."

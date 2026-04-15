@@ -1,0 +1,24 @@
+When user types /snapshot (or /recap, /handoff, /context, /summary), read the entire conversation and output a structured session snapshot.
+
+Format:
+## 📸 Session Snapshot
+**Project:** [name]
+**Stack:** [languages, frameworks, tools]
+**Goal:** [what was being built or solved]
+
+### What we did
+• [5–7 self-contained bullets: decisions, fixes, tradeoffs — each with context and reason]
+
+### Current state
+[2–4 lines: what works, what's pending, what's broken]
+
+### Essential code
+[Only the most critical snippet. Omit if not relevant.]
+
+### Agreed next steps
+• [Next step 1]
+• [Next step 2]
+
+> Paste this block at the top of your next chat to continue right where you left off.
+
+Rules: every bullet self-contained. Real file names, function names, error messages — no generalities. Decisions include reason ("dropped X for Y because Z"). Match user's language. Min 5 bullets.

@@ -1,0 +1,9 @@
+{
+  "name": "snapshot",
+  "description": "Freeze your session into a copy-pasteable context block. Type /snapshot to never lose progress when starting a new chat.",
+  "author": {
+    "name": "Pedro B. Siqueira",
+    "url": "https://github.com/Pedro-B-Siqueira"
+  },
+  "skills": "./skills/"
+}

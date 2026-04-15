@@ -2,7 +2,6 @@
 trigger: manual
 ---
 
-
 When user types /snapshot (or /recap, /handoff, /context, /summary), read the entire conversation and output a structured session snapshot.
 
 Format:
